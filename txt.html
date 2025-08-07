@@ -1,101 +1,147 @@
-# @lelebmangas
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atribuições Constitucionais dos Poderes na República</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- AOS CSS (Animações) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atribuições Constitucionais dos Poderes na República</title>
 
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #000;
-            color: white;
-            padding: 20px;
-        }
-        .container-box {
-            background: #111;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0px 4px 20px rgba(255,255,255,0.1);
-            max-width: 900px;
-            margin: 40px auto;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        h2 {
-            margin-bottom: 20px;
-            border-bottom: 3px solid #e74c3c;
-            padding-bottom: 10px;
-            color: #e74c3c;
-        }
-        p {
-            color: #ddd;
-            text-align: justify;
-        }
-        .explicacao {
-            background: #0f3d0f;
-            padding: 15px;
-            border-left: 5px solid #2ecc71;
-            border-radius: 8px;
-            margin-top: 15px;
-            color: #baf7ba;
-            font-style: italic;
-        }
-    </style>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- AOS CSS (Animações) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #000;
+      color: white;
+      padding: 20px;
+    }
+
+    .container-box {
+      background: #111;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.1);
+      max-width: 900px;
+      margin: 40px auto;
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      border-bottom: 3px solid #e74c3c;
+      padding-bottom: 10px;
+      color: #e74c3c;
+    }
+
+    .user-info {
+      font-size: 0.9em;
+      color: #ccc;
+      text-align: center;
+      margin-top: -10px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: #ddd;
+      text-align: justify;
+    }
+
+    .explicacao {
+      background: #0f3d0f;
+      padding: 15px;
+      border-left: 5px solid #2ecc71;
+      border-radius: 8px;
+      margin-top: 15px;
+      color: #baf7ba;
+      font-style: italic;
+    }
+  </style>
 </head>
 <body>
 
 <div class="container-box" data-aos="fade-up">
-    <h1 style="color:#e74c3c;">Atribuições Constitucionais dos Poderes na República</h1>
+  <h1 style="color:#e74c3c;">Atribuições Constitucionais dos Poderes na República</h1>
+</div>
+
+<!-- Seções -->
+<div class="container-box" data-aos="fade-up">
+  <h2>1. Teoria da Separação dos Poderes</h2>
+  <div class="user-info">Postado por: <span id="user1">Carregando...</span></div>
+  <p>De acordo com a teoria da separação dos poderes...</p>
+  <div class="explicacao">💬 Montesquieu dizia que o poder deve ser dividido...</div>
 </div>
 
 <div class="container-box" data-aos="fade-up">
-    <h2>1. Teoria da Separação dos Poderes</h2>
-    <p>De acordo com a teoria da separação dos poderes, do pensador iluminista Charles de Montesquieu (1689-1755), o funcionamento constitucional do Estado é organizado em três poderes, que se fiscalizam mutuamente para que não ocorra abuso de um deles em relação aos demais. Esse sistema ajuda a garantir que nenhum dos poderes constituídos ultrapasse a esfera de suas atribuições.</p>
-    <div class="explicacao">💬 Montesquieu dizia que o poder deve ser dividido em três partes: Legislativo, Executivo e Judiciário. Cada um vigia o outro para evitar abusos e manter o equilíbrio.</div>
+  <h2>2. Constituição Federal de 1988</h2>
+  <div class="user-info">Postado por: <span id="user2">Carregando...</span></div>
+  <p>Tal desejo de equilíbrio entre os poderes...</p>
+  <div class="explicacao">💬 A Constituição garante que os três poderes...</div>
 </div>
 
 <div class="container-box" data-aos="fade-up">
-    <h2>2. Constituição Federal de 1988</h2>
-    <p>Tal desejo de equilíbrio entre os poderes ficou expresso na Constituição Federal Brasileira de 1988: “São Poderes da União, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário”. Além de uma divisão tripartite horizontal, a Constituição também estabelece o princípio do federalismo, que confere autonomia administrativa e orçamentária para outros entes federais além da União, como estados e municípios.</p>
-    <div class="explicacao">💬 A Constituição garante que os três poderes sejam independentes e que União, estados e municípios possam cuidar de suas próprias questões (federalismo).</div>
+  <h2>3. Poder Legislativo</h2>
+  <div class="user-info">Postado por: <span id="user3">Carregando...</span></div>
+  <p>As funções essenciais típicas do Poder Legislativo...</p>
+  <div class="explicacao">💬 O Legislativo cria leis...</div>
 </div>
 
 <div class="container-box" data-aos="fade-up">
-    <h2>3. Poder Legislativo</h2>
-    <p>As funções essenciais típicas do Poder Legislativo são a elaboração do orçamento e das leis, normas e códigos jurídicos, bem como a formulação de políticas públicas em áreas sociais estratégicas. No Brasil, o Poder Legislativo federal é bicameral, ou seja, é composto de duas câmaras: a Câmara dos Deputados e o Senado Federal.</p>
-    <div class="explicacao">💬 O Legislativo cria leis, define o orçamento e fiscaliza. É formado pela Câmara dos Deputados (representa o povo) e pelo Senado Federal (representa os estados).</div>
+  <h2>4. Poder Executivo</h2>
+  <div class="user-info">Postado por: <span id="user4">Carregando...</span></div>
+  <p>No contexto brasileiro, o Poder Executivo...</p>
+  <div class="explicacao">💬 O Executivo, liderado pelo Presidente...</div>
 </div>
 
 <div class="container-box" data-aos="fade-up">
-    <h2>4. Poder Executivo</h2>
-    <p>No contexto brasileiro, o Poder Executivo, em nível federal, é exercido pela figura do presidente da República, que representa o Estado brasileiro perante outros países, como chefe de Estado. Ele pode assinar tratados, convenções e atos internacionais. No sistema presidencialista, o Executivo tem muita força. Isso porque, no Brasil, por exemplo, ele pode nomear diversos cargos políticos importantes, inclusive pertencentes aos outros dois poderes.</p>
-    <p>Para manter a governabilidade e conseguir fazer aprovar seus projetos de lei e promessas de campanha, o presidente precisa ter a maioria do apoio dos congressistas, o que nem sempre é possível. Para conquistar tal apoio, o governo acaba contemplando partidos com cargos em ministérios e com outras vantagens, o que acaba criando um sistema que lembra os modelos parlamentares, mas com sentido inverso. O sistema foi denominado pelo cientista político Sérgio Abranches como presidencialismo de coalizão.</p>
-    <div class="explicacao">💬 O Executivo, liderado pelo Presidente, coloca as leis em prática e governa o país. Para aprovar projetos, precisa de apoio político, o que gera o chamado "presidencialismo de coalizão".</div>
+  <h2>5. Poder Judiciário</h2>
+  <div class="user-info">Postado por: <span id="user5">Carregando...</span></div>
+  <p>O Poder Judiciário no Brasil é administrado...</p>
+  <div class="explicacao">💬 O Judiciário, liderado pelo STF...</div>
 </div>
 
-<div class="container-box" data-aos="fade-up">
-    <h2>5. Poder Judiciário</h2>
-    <p>O Poder Judiciário no Brasil é administrado de forma colegiada pelos juízes ou ministros do Supremo Tribunal Federal (STF). O STF age como guardião principal da Constituição Federal. Além de ser a instância competente para julgar os chefes dos outros poderes, o STF também é a última instância de qualquer decisão jurídica no país. A função primordial do Judiciário é solucionar os conflitos sociais à luz da Constituição Federal.</p>
-    <p>A morosidade do Legislativo em resolver algumas questões de grande relevância, como o aborto, a pesquisa de células-tronco, as políticas afirmativas e a criminalização da homofobia, tem levado o STF a anunciar decisões que parecem ter força similar a uma lei. Tal iniciativa é criticada pelos outros poderes como ativismo judicial. Os impasses também têm levado o STF a se pronunciar em casos de conflitos entre os entes federados, fenômeno que ficou conhecido como judicialização da política.</p>
-    <div class="explicacao">💬 O Judiciário, liderado pelo STF, garante que a Constituição seja cumprida e resolve conflitos. Quando o Legislativo demora para decidir, ele pode agir — isso é chamado ativismo judicial.</div>
-</div>
+<!-- Firebase Config -->
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBHIc2E4XwRO5FXo4uHlTQVRArOis73MjE",
+    authDomain: "projeto-deus-yato-928-sk-default-rtdb.firebaseapp.com",
+    projectId: "projeto-deus-yato-928-sk-default-rtdb",
+    storageBucket: "projeto-deus-yato-928-sk-default-rtdb.appspot.com",
+    messagingSenderId: "790408726854",
+    appId: "1:790408726854:android:e2f0de7b7d5dba96b0fd47"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // Nome fixo para demonstração — você pode salvar nomes em Firestore também
+      const name = user.displayName || "Usuário";
+      document.getElementById("user1").innerText = name;
+      document.getElementById("user2").innerText = name;
+      document.getElementById("user3").innerText = name;
+      document.getElementById("user4").innerText = name;
+      document.getElementById("user5").innerText = name;
+    } else {
+      window.location.href = "login.html"; // Redireciona se não estiver logado
+    }
+  });
+</script>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <!-- AOS JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script>
-    AOS.init({ duration: 800, once: true });
+  AOS.init({ duration: 800, once: true });
 </script>
 
 </body>
