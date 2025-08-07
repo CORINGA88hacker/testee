@@ -1,0 +1,110 @@
+# Vamos criar um arquivo HTML com o conteúdo já formatado com títulos e listas para melhor visualização.
+
+html_conteudo = """
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atribuições Constitucionais dos Poderes na República</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        ul {
+            margin-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Atribuições Constitucionais dos Poderes na República</h1>
+
+        <h2>1. Teoria da Separação dos Poderes</h2>
+        <ul>
+            <li>Proposta pelo pensador iluminista Charles de Montesquieu (1689-1755).</li>
+            <li>Organização do Estado em três poderes: Legislativo, Executivo e Judiciário.</li>
+            <li>Fiscalizam-se mutuamente para evitar abusos de poder.</li>
+            <li>Objetivo: garantir que nenhum poder ultrapasse suas atribuições.</li>
+        </ul>
+
+        <h2>2. Constituição Federal Brasileira de 1988</h2>
+        <ul>
+            <li>Define: “São Poderes da União, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário”.</li>
+            <li>Estabelece também o princípio do federalismo, garantindo autonomia administrativa e orçamentária para União, estados e municípios.</li>
+        </ul>
+
+        <h2>3. Poder Legislativo</h2>
+        <ul>
+            <li>Funções essenciais típicas:
+                <ul>
+                    <li>Elaboração do orçamento.</li>
+                    <li>Criação de leis, normas e códigos jurídicos.</li>
+                    <li>Formulação de políticas públicas estratégicas.</li>
+                </ul>
+            </li>
+            <li>Estrutura bicameral no Brasil: Câmara dos Deputados e Senado Federal.</li>
+        </ul>
+
+        <h2>4. Poder Executivo</h2>
+        <ul>
+            <li>Exercido pelo Presidente da República no nível federal.</li>
+            <li>Funções:
+                <ul>
+                    <li>Representar o Estado brasileiro internacionalmente (chefe de Estado).</li>
+                    <li>Assinar tratados, convenções e atos internacionais.</li>
+                    <li>Nomear cargos políticos, inclusive de outros poderes.</li>
+                </ul>
+            </li>
+            <li>No sistema presidencialista brasileiro:
+                <ul>
+                    <li>Necessita apoio da maioria dos congressistas para aprovar projetos.</li>
+                    <li>Formação de alianças com partidos políticos, oferecendo cargos e vantagens — fenômeno chamado “presidencialismo de coalizão” (Sérgio Abranches).</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2>5. Poder Judiciário</h2>
+        <ul>
+            <li>Administrado de forma colegiada por juízes/ministros do Supremo Tribunal Federal (STF).</li>
+            <li>Funções:
+                <ul>
+                    <li>Guardião da Constituição Federal.</li>
+                    <li>Julgar chefes dos outros poderes.</li>
+                    <li>Última instância de decisões jurídicas no país.</li>
+                    <li>Resolver conflitos sociais à luz da Constituição.</li>
+                </ul>
+            </li>
+            <li>Questões como aborto, células-tronco, políticas afirmativas e criminalização da homofobia têm levado o STF a tomar decisões com força similar a leis (ativismo judicial).</li>
+            <li>Atua também em conflitos entre entes federados, fenômeno chamado judicialização da política.</li>
+        </ul>
+    </div>
+</body>
+</html>
+"""
+
+# Salvando o HTML
+caminho_html = "/mnt/data/atribuicoes_constitucionais_poderes.html"
+with open(caminho_html, "w", encoding="utf-8") as f:
+    f.write(html_conteudo)
+
+caminho_html
