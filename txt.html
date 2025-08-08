@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Editor de Texto dos Poderes</title>
+  <title>Editor de Texto com Nome</title>
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -31,11 +31,20 @@
       margin-bottom: 15px;
     }
 
-    .user-info {
+    .user-input, .user-info {
       font-size: 0.9em;
       color: #bbb;
-      text-align: center;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
+    }
+
+    .user-input input {
+      width: 100%;
+      padding: 8px;
+      background: #222;
+      border: 1px solid #444;
+      border-radius: 8px;
+      color: #eee;
+      margin-bottom: 10px;
     }
 
     textarea {
@@ -62,63 +71,80 @@
 </head>
 <body>
 
-<div class="container-box">
-  <h2>1. Teoria da Separação dos Poderes</h2>
-  <div class="user-info">Escrito por: @lelebmangas</div>
-  <textarea id="txt1" placeholder="Digite aqui..."></textarea>
-  <button class="btn btn-success" onclick="salvarTexto('txt1')">Salvar</button>
-  <div class="saved-message" id="msg-txt1"></div>
-</div>
+<h1 class="text-center mb-4" style="color: #e74c3c;">Editor de Texto com Nome (Sem Login)</h1>
 
-<div class="container-box">
-  <h2>2. Constituição Federal de 1988</h2>
-  <div class="user-info">Escrito por: @maninho</div>
-  <textarea id="txt2" placeholder="Digite aqui..."></textarea>
-  <button class="btn btn-success" onclick="salvarTexto('txt2')">Salvar</button>
-  <div class="saved-message" id="msg-txt2"></div>
-</div>
-
-<div class="container-box">
-  <h2>3. Poder Legislativo</h2>
-  <div class="user-info">Escrito por: @prof.julia</div>
-  <textarea id="txt3" placeholder="Digite aqui..."></textarea>
-  <button class="btn btn-success" onclick="salvarTexto('txt3')">Salvar</button>
-  <div class="saved-message" id="msg-txt3"></div>
-</div>
-
-<div class="container-box">
-  <h2>4. Poder Executivo</h2>
-  <div class="user-info">Escrito por: @rafael.estudos</div>
-  <textarea id="txt4" placeholder="Digite aqui..."></textarea>
-  <button class="btn btn-success" onclick="salvarTexto('txt4')">Salvar</button>
-  <div class="saved-message" id="msg-txt4"></div>
-</div>
-
-<div class="container-box">
-  <h2>5. Poder Judiciário</h2>
-  <div class="user-info">Escrito por: @carolina.stf</div>
-  <textarea id="txt5" placeholder="Digite aqui..."></textarea>
-  <button class="btn btn-success" onclick="salvarTexto('txt5')">Salvar</button>
-  <div class="saved-message" id="msg-txt5"></div>
-</div>
+<!-- Seções 1 a 5 -->
+<div id="editor-sections"></div>
 
 <script>
-  // Carrega os textos salvos ao abrir a página
+  const secoes = [
+    "1. Teoria da Separação dos Poderes",
+    "2. Constituição Federal de 1988",
+    "3. Poder Legislativo",
+    "4. Poder Executivo",
+    "5. Poder Judiciário"
+  ];
+
+  const container = document.getElementById("editor-sections");
+
+  // Cria as seções dinamicamente
+  secoes.forEach((titulo, index) => {
+    const id = index + 1;
+
+    container.innerHTML += `
+      <div class="container-box">
+        <h2>${titulo}</h2>
+
+        <div class="user-input">
+          Nome: <input type="text" id="autor${id}" placeholder="@seunome" />
+        </div>
+
+        <div class="user-info">Escrito por: <span id="nome${id}">Ninguém ainda 😅</span></div>
+
+        <textarea id="txt${id}" placeholder="Digite aqui..."></textarea>
+
+        <button class="btn btn-success" onclick="salvar(${id})">Salvar</button>
+        <div class="saved-message" id="msg${id}"></div>
+      </div>
+    `;
+  });
+
+  // Carrega dados do localStorage ao abrir
   window.onload = () => {
-    for (let i = 1; i <= 5; i++) {
-      const txt = localStorage.getItem('texto' + i);
-      if (txt) document.getElementById('txt' + i).value = txt;
-    }
+    secoes.forEach((_, index) => {
+      const id = index + 1;
+      const nome = localStorage.getItem(`autor${id}`);
+      const texto = localStorage.getItem(`texto${id}`);
+
+      if (nome) {
+        document.getElementById(`nome${id}`).innerText = nome;
+        document.getElementById(`autor${id}`).value = nome;
+      }
+
+      if (texto) {
+        document.getElementById(`txt${id}`).value = texto;
+      }
+    });
   };
 
-  function salvarTexto(id) {
-    const texto = document.getElementById(id).value;
-    localStorage.setItem('texto' + id.replace('txt', ''), texto);
+  // Função para salvar nome + texto
+  function salvar(id) {
+    const nome = document.getElementById(`autor${id}`).value.trim();
+    const texto = document.getElementById(`txt${id}`).value;
 
-    const msgId = 'msg-' + id;
-    document.getElementById(msgId).innerText = "Salvo com sucesso!";
+    if (!nome) {
+      alert("Digite seu nome antes de salvar!");
+      return;
+    }
+
+    localStorage.setItem(`autor${id}`, nome);
+    localStorage.setItem(`texto${id}`, texto);
+
+    document.getElementById(`nome${id}`).innerText = nome;
+    document.getElementById(`msg${id}`).innerText = "Salvo com sucesso!";
+
     setTimeout(() => {
-      document.getElementById(msgId).innerText = "";
+      document.getElementById(`msg${id}`).innerText = "";
     }, 2000);
   }
 </script>
