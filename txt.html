@@ -3,18 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atribuições Constitucionais dos Poderes na República</title>
+  <title>Editor de Texto dos Poderes</title>
 
-  <!-- Bootstrap CSS -->
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- AOS CSS (Animações) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet" />
 
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
       background: #000;
-      color: white;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       padding: 20px;
     }
 
@@ -22,93 +20,107 @@
       background: #111;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.1);
-      max-width: 900px;
-      margin: 40px auto;
-    }
-
-    h1, h2 {
-      text-align: center;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+      margin-bottom: 30px;
     }
 
     h2 {
-      margin-bottom: 20px;
-      border-bottom: 3px solid #e74c3c;
-      padding-bottom: 10px;
       color: #e74c3c;
+      border-bottom: 2px solid #e74c3c;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .user-info {
       font-size: 0.9em;
-      color: #ccc;
+      color: #bbb;
       text-align: center;
-      margin-top: -10px;
       margin-bottom: 15px;
     }
 
-    p {
-      color: #ddd;
-      text-align: justify;
+    textarea {
+      width: 100%;
+      height: 180px;
+      background: #222;
+      color: #eee;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 15px;
+      resize: vertical;
     }
 
-    .explicacao {
-      background: #0f3d0f;
-      padding: 15px;
-      border-left: 5px solid #2ecc71;
-      border-radius: 8px;
-      margin-top: 15px;
-      color: #baf7ba;
-      font-style: italic;
+    button {
+      margin-top: 10px;
+    }
+
+    .saved-message {
+      color: #2ecc71;
+      font-size: 0.9em;
+      margin-top: 5px;
     }
   </style>
 </head>
 <body>
 
-<div class="container-box" data-aos="fade-up">
-  <h1 style="color:#e74c3c;">Atribuições Constitucionais dos Poderes na República</h1>
-</div>
-
-<div class="container-box" data-aos="fade-up">
+<div class="container-box">
   <h2>1. Teoria da Separação dos Poderes</h2>
   <div class="user-info">Escrito por: @lelebmangas</div>
-  <p>De acordo com a teoria da separação dos poderes...</p>
-  <div class="explicacao">💬 Montesquieu dizia que o poder deve ser dividido...</div>
+  <textarea id="txt1" placeholder="Digite aqui..."></textarea>
+  <button class="btn btn-success" onclick="salvarTexto('txt1')">Salvar</button>
+  <div class="saved-message" id="msg-txt1"></div>
 </div>
 
-<div class="container-box" data-aos="fade-up">
+<div class="container-box">
   <h2>2. Constituição Federal de 1988</h2>
   <div class="user-info">Escrito por: @maninho</div>
-  <p>Tal desejo de equilíbrio entre os poderes...</p>
-  <div class="explicacao">💬 A Constituição garante que os três poderes...</div>
+  <textarea id="txt2" placeholder="Digite aqui..."></textarea>
+  <button class="btn btn-success" onclick="salvarTexto('txt2')">Salvar</button>
+  <div class="saved-message" id="msg-txt2"></div>
 </div>
 
-<div class="container-box" data-aos="fade-up">
+<div class="container-box">
   <h2>3. Poder Legislativo</h2>
   <div class="user-info">Escrito por: @prof.julia</div>
-  <p>As funções essenciais típicas do Poder Legislativo...</p>
-  <div class="explicacao">💬 O Legislativo cria leis...</div>
+  <textarea id="txt3" placeholder="Digite aqui..."></textarea>
+  <button class="btn btn-success" onclick="salvarTexto('txt3')">Salvar</button>
+  <div class="saved-message" id="msg-txt3"></div>
 </div>
 
-<div class="container-box" data-aos="fade-up">
+<div class="container-box">
   <h2>4. Poder Executivo</h2>
   <div class="user-info">Escrito por: @rafael.estudos</div>
-  <p>No contexto brasileiro, o Poder Executivo...</p>
-  <div class="explicacao">💬 O Executivo, liderado pelo Presidente...</div>
+  <textarea id="txt4" placeholder="Digite aqui..."></textarea>
+  <button class="btn btn-success" onclick="salvarTexto('txt4')">Salvar</button>
+  <div class="saved-message" id="msg-txt4"></div>
 </div>
 
-<div class="container-box" data-aos="fade-up">
+<div class="container-box">
   <h2>5. Poder Judiciário</h2>
   <div class="user-info">Escrito por: @carolina.stf</div>
-  <p>O Poder Judiciário no Brasil é administrado...</p>
-  <div class="explicacao">💬 O Judiciário, liderado pelo STF...</div>
+  <textarea id="txt5" placeholder="Digite aqui..."></textarea>
+  <button class="btn btn-success" onclick="salvarTexto('txt5')">Salvar</button>
+  <div class="saved-message" id="msg-txt5"></div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<!-- AOS JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script>
-  AOS.init({ duration: 800, once: true });
+  // Carrega os textos salvos ao abrir a página
+  window.onload = () => {
+    for (let i = 1; i <= 5; i++) {
+      const txt = localStorage.getItem('texto' + i);
+      if (txt) document.getElementById('txt' + i).value = txt;
+    }
+  };
+
+  function salvarTexto(id) {
+    const texto = document.getElementById(id).value;
+    localStorage.setItem('texto' + id.replace('txt', ''), texto);
+
+    const msgId = 'msg-' + id;
+    document.getElementById(msgId).innerText = "Salvo com sucesso!";
+    setTimeout(() => {
+      document.getElementById(msgId).innerText = "";
+    }, 2000);
+  }
 </script>
 
 </body>
