@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Poderes da República - Editor</title>
+  <title>Poderes da República - Editor Colaborativo</title>
 
   <!-- Bootstrap + Ícones -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
   <style>
+    /* (mesmo CSS do seu código, sem alterações para brevidade) */
     :root {
       --bg-dark: #121212;
       --bg-light: #f5f5f5;
@@ -37,7 +38,6 @@
       user-select: text;
     }
 
-    /* Nav tabs */
     .nav-tabs {
       border-bottom: 2px solid var(--primary-color);
       user-select: none;
@@ -59,7 +59,6 @@
       user-select: none;
     }
 
-    /* Tab content container */
     .tab-content {
       background: var(--bg-dark);
       padding: 20px;
@@ -76,7 +75,6 @@
       color: var(--text-dark);
     }
 
-    /* Inputs */
     input[type="text"], textarea {
       width: 100%;
       border-radius: 8px;
@@ -113,7 +111,6 @@
       border-radius: 10px;
     }
 
-    /* Buttons */
     .btn {
       user-select: none;
       transition: background-color 0.3s ease;
@@ -131,7 +128,6 @@
       margin-left: 10px;
     }
 
-    /* Saved message */
     .saved-message {
       margin-top: 8px;
       font-size: 0.9rem;
@@ -149,7 +145,6 @@
     .msg-red { color: #e74c3c; }
     .msg-yellow { color: #f1c40f; }
 
-    /* Counter & Search */
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -176,7 +171,6 @@
       user-select: none;
     }
 
-    /* Toggle switch */
     .switch {
       position: relative;
       display: inline-block;
@@ -211,12 +205,10 @@
       transform: translateX(24px);
     }
 
-    /* Tooltip */
     [data-bs-toggle="tooltip"] {
       cursor: pointer;
     }
 
-    /* Responsive */
     @media (max-width: 576px) {
       .btn {
         min-width: 80px;
@@ -280,9 +272,28 @@
   <!-- Abas criadas por JS -->
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+  // Config Firebase - seu projeto
+  const firebaseConfig = {
+    apiKey: "AIzaSyBHIc2E4XwRO5FXo4uHlTQVRArOis73MjE",
+    authDomain: "projeto-deus-yato-928-sk-default-rtdb.firebaseapp.com",
+    databaseURL: "https://projeto-deus-yato-928-sk-default-rtdb.firebaseio.com",
+    projectId: "projeto-deus-yato-928-sk-default-rtdb",
+    storageBucket: "projeto-deus-yato-928-sk-default-rtdb.appspot.com",
+    messagingSenderId: "790408726854",
+    appId: "1:790408726854:android:e2f0de7b7d5dba96b0fd47"
+  };
+
+  // Inicializa Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
   const conteudoAbas = document.getElementById('conteudoAbas');
   const tituloPagina = document.getElementById('tituloPagina');
   const toggleTema = document.getElementById('toggleTema');
@@ -310,7 +321,7 @@
         <i class="bi bi-search search-icon"></i>
       </div>
 
-      <textarea id="txt${i}" placeholder="Digite aqui..." aria-label="Conteúdo do slide ${i}" oninput="aoDigitar(${i})" disabled></textarea>
+      <textarea id="txt${i}" placeholder="Digite aqui..." aria-label="Conteúdo do slide ${i}" oninput="aoDigitar(${i})"></textarea>
 
       <div class="status-bar">
         <span id="contador${i}">Linhas: 0 | Caracteres: 0</span>
@@ -333,7 +344,7 @@
     return new bootstrap.Tooltip(tooltipTriggerEl)
   });
 
-  // Função para carregar dados do localStorage e aplicar modo tema
+  // Carregar dados do Firebase e ativar eventos
   window.onload = () => {
     // Modo tema
     const temaSalvo = localStorage.getItem('temaEscuro');
@@ -352,26 +363,29 @@
       iconeSom.style.color = '#666';
     }
 
-    // Dados
+    // Escutar dados do Firebase para cada aba e atualizar conteúdo
     for(let i=1; i<=5; i++){
-      const nome = localStorage.getItem(`autor${i}`);
-      const texto = localStorage.getItem(`texto${i}`);
+      db.ref(`slides/slide${i}`).on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(data){
+          const nomeInput = document.getElementById(`autor${i}`);
+          const nomeDisplay = document.getElementById(`nome${i}`);
+          const txtArea = document.getElementById(`txt${i}`);
 
-      if(nome){
-        document.getElementById(`autor${i}`).value = nome;
-        document.getElementById(`nome${i}`).innerText = nome;
-        document.getElementById(`txt${i}`).disabled = false;
-      }
-      if(texto){
-        document.getElementById(`txt${i}`).value = texto;
-        atualizarContador(i);
-        textoAnterior[i] = texto;
-      }
+          nomeInput.value = data.autor || '';
+          nomeDisplay.textContent = data.autor || 'Ninguém ainda';
+          txtArea.value = data.texto || '';
+          txtArea.disabled = !data.autor;
+
+          atualizarContador(i);
+          textoAnterior[i] = data.texto || '';
+        }
+      });
     }
 
     atualizarTitulo();
 
-    // Evento atalho Ctrl+S
+    // Atalho Ctrl+S salvar aba atual
     window.addEventListener('keydown', e => {
       if(e.ctrlKey && e.key.toLowerCase() === 's'){
         e.preventDefault();
@@ -384,7 +398,6 @@
     });
   }
 
-  // Atualiza título da página com aba ativa
   function atualizarTitulo(){
     const abaAtiva = document.querySelector('.nav-link.active');
     if(abaAtiva){
@@ -392,7 +405,7 @@
       tituloPagina.textContent = `Editor - ${abaAtiva.textContent.trim()}`;
     }
   }
-  // Atualiza nome autor e habilita textarea
+
   function atualizarNome(i){
     const nomeInput = document.getElementById(`autor${i}`);
     const nomeDisplay = document.getElementById(`nome${i}`);
@@ -409,14 +422,11 @@
     }
   }
 
-  // Salvamento automático e manual
   function aoDigitar(i){
     mostrarMensagem(i, 'Digitando...', 'msg-yellow');
-
     atualizarContador(i);
 
     if(autoSaveTimers[i]) clearTimeout(autoSaveTimers[i]);
-
     autoSaveTimers[i] = setTimeout(() => {
       const texto = document.getElementById(`txt${i}`).value;
       if(textoAnterior[i] !== texto){
@@ -427,7 +437,6 @@
     }, 5000);
   }
 
-  // Atualiza contador de linhas e caracteres
   function atualizarContador(i){
     const texto = document.getElementById(`txt${i}`).value;
     const linhas = texto.split('\n').length;
@@ -435,12 +444,10 @@
     document.getElementById(`contador${i}`).textContent = `Linhas: ${linhas} | Caracteres: ${caracteres}`;
   }
 
-  // Salvar
   function salvar(i){
     const nomeInput = document.getElementById(`autor${i}`);
     const textoArea = document.getElementById(`txt${i}`);
     const nomeDisplay = document.getElementById(`nome${i}`);
-    const msg = document.getElementById(`msg${i}`);
 
     const nome = nomeInput.value.trim();
     const texto = textoArea.value;
@@ -450,117 +457,103 @@
       return;
     }
 
-    localStorage.setItem(`autor${i}`, nome);
-    localStorage.setItem(`texto${i}`, texto);
-    nomeDisplay.textContent = nome;
-    textoAnterior[i] = texto;
-
-    mostrarMensagem(i, 'Salvo com sucesso!', 'msg-green');
-    if(somAtivo) tocarSomSalvo();
-
-    setTimeout(() => limparMensagem(i), 2500);
+    db.ref(`slides/slide${i}`).set({
+      autor: nome,
+      texto: texto
+    }).then(() => {
+      nomeDisplay.textContent = nome;
+      textoAnterior[i] = texto;
+      mostrarMensagem(i, 'Salvo no servidor com sucesso!', 'msg-green');
+      if(somAtivo) tocarSomSalvo();
+      setTimeout(() => limparMensagem(i), 2500);
+    }).catch(() => {
+      mostrarMensagem(i, 'Erro ao salvar no servidor', 'msg-red');
+    });
   }
 
-  // Limpar tudo
   function limpar(i){
-    if(confirm('Tem certeza que deseja apagar tudo?')){
-      localStorage.removeItem(`autor${i}`);
-      localStorage.removeItem(`texto${i}`);
-      document.getElementById(`autor${i}`).value = '';
-      document.getElementById(`txt${i}`).value = '';
-      document.getElementById(`nome${i}`).textContent = 'Ninguém ainda';
-      document.getElementById(`txt${i}`).disabled = true;
-      atualizarContador(i);
-      limparMensagem(i);
+    if(!confirm('Tem certeza que quer limpar nome e texto desta aba?')){
+      return;
     }
+    db.ref(`slides/slide${i}`).remove();
   }
 
-  // Mostrar mensagem com classe e ícone
-  function mostrarMensagem(i, texto, classe){
-    const msg = document.getElementById(`msg${i}`);
-    const icones = {
-      'msg-green': 'bi-check-circle',
-      'msg-red': 'bi-exclamation-circle',
-      'msg-yellow': 'bi-pencil-square'
-    };
-    msg.innerHTML = `<i class="bi ${icones[classe]}"></i> <span class="${classe}">${texto}</span>`;
-    msg.classList.add('show');
+  function mostrarMensagem(i, msg, classe){
+    const msgEl = document.getElementById(`msg${i}`);
+    msgEl.textContent = msg;
+    msgEl.className = `saved-message show ${classe}`;
   }
 
-  // Limpar mensagem
   function limparMensagem(i){
-    const msg = document.getElementById(`msg${i}`);
-    msg.classList.remove('show');
-    msg.innerHTML = '';
+    const msgEl = document.getElementById(`msg${i}`);
+    msgEl.className = 'saved-message';
   }
 
-  // Exportar texto para arquivo .txt
   function exportarTexto(i){
-    const nome = document.getElementById(`autor${i}`).value.trim() || "SemAutor";
-    const texto = document.getElementById(`txt${i}`).value;
-    const blob = new Blob([texto], {type: "text/plain"});
+    const nomeInput = document.getElementById(`autor${i}`);
+    const textoArea = document.getElementById(`txt${i}`);
+
+    const nome = nomeInput.value.trim() || 'Anonimo';
+    const texto = textoArea.value || '';
+
+    const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
     const link = document.createElement('a');
+    link.download = `slide${i}_${nome}.txt`;
     link.href = URL.createObjectURL(blob);
-    link.download = `Slide${i}_${nome.replace("@","")}.txt`;
     link.click();
+    URL.revokeObjectURL(link.href);
   }
 
-  // Filtrar texto dentro do textarea - simples, mostra só o que tem
   function filtrarTexto(i){
-    const filtro = document.getElementById(`search${i}`).value.toLowerCase();
-    const txtArea = document.getElementById(`txt${i}`);
-    const textoOriginal = localStorage.getItem(`texto${i}`) || '';
+    const searchInput = document.getElementById(`search${i}`);
+    const textoArea = document.getElementById(`txt${i}`);
 
-    if(!filtro){
-      txtArea.value = textoOriginal;
-    } else {
-      const linhas = textoOriginal.split('\n');
-      const linhasFiltradas = linhas.filter(l => l.toLowerCase().includes(filtro));
-      txtArea.value = linhasFiltradas.join('\n');
+    const termo = searchInput.value.toLowerCase();
+    const textoOriginal = textoArea.value;
+
+    if(!termo){
+      textoArea.value = textoAnterior[i] || '';
+      return;
     }
-    atualizarContador(i);
+
+    // Filtrar linhas que contenham o termo
+    const linhas = textoAnterior[i].split('\n');
+    const linhasFiltradas = linhas.filter(l => l.toLowerCase().includes(termo));
+    textoArea.value = linhasFiltradas.join('\n');
   }
 
-  // Toggle tema claro/escuro e salvar no localStorage
+  // Tema claro/escuro
   toggleTema.addEventListener('change', () => {
-    document.body.classList.toggle('light', toggleTema.checked);
-    localStorage.setItem('temaEscuro', toggleTema.checked ? 'false' : 'true');
+    if(toggleTema.checked){
+      document.body.classList.add('light');
+      localStorage.setItem('temaEscuro', 'false');
+    } else {
+      document.body.classList.remove('light');
+      localStorage.setItem('temaEscuro', 'true');
+    }
   });
 
-  // Toggle som de salvamento
+  // Som ao salvar
   toggleSom.addEventListener('change', () => {
     somAtivo = toggleSom.checked;
+    localStorage.setItem('somAtivo', somAtivo ? 'true' : 'false');
     iconeSom.style.color = somAtivo ? 'var(--primary-color)' : '#666';
-    localStorage.setItem('somAtivo', somAtivo.toString());
   });
 
-  // Atualiza título da página ao trocar de aba
-  const tabLinks = document.querySelectorAll('.nav-link');
-  tabLinks.forEach(link => {
+  // Som de salvamento
+  function tocarSomSalvo(){
+    if(!somSave){
+      somSave = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+    }
+    somSave.play();
+  }
+
+  // Atualizar título e tabs
+  const navLinks = document.querySelectorAll('.nav-link');
+  navLinks.forEach(link => {
     link.addEventListener('shown.bs.tab', () => {
       atualizarTitulo();
     });
-  });
-
-  // Função para tocar som de salvamento (beep curto)
-  function tocarSomSalvo(){
-    if(!somSave){
-      somSave = new Audio("data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YRAAAAAA"); 
-    }
-    somSave.play().catch(()=>{}); // evita erros se bloqueado
-  }
-
-  // Undo/Redo básico usando execCommand (funciona na maioria dos navegadores)
-  document.addEventListener('keydown', e => {
-    if(document.activeElement.tagName === 'TEXTAREA'){
-      if(e.ctrlKey && e.key.toLowerCase() === 'z'){
-        e.preventDefault();
-        document.execCommand('undo');
-      } else if(e.ctrlKey && e.key.toLowerCase() === 'y'){
-        e.preventDefault();
-        document.execCommand('redo');
-      }
-    }
   });
 </script>
 
