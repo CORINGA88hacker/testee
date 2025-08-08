@@ -173,3 +173,396 @@
       margin-top: 8px;
       color: var(--primary-color);
       pointer-events: none;
+      user-select: none;
+    }
+
+    /* Toggle switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 52px;
+      height: 28px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    .switch input { display:none; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      border-radius: 34px;
+      transition: .4s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px; width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+    input:checked + .slider {
+      background-color: var(--primary-color);
+    }
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    /* Tooltip */
+    [data-bs-toggle="tooltip"] {
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+      .btn {
+        min-width: 80px;
+        font-size: 0.85rem;
+      }
+      .d-flex {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<h1 id="tituloPagina" tabindex="0">Editor - Poderes da República</h1>
+
+<div class="d-flex justify-content-center align-items-center mb-3 flex-wrap gap-3">
+  <label for="toggleTema" class="form-label mb-0">Modo Claro/Escuro</label>
+  <label class="switch" title="Alternar modo claro/escuro">
+    <input type="checkbox" id="toggleTema" />
+    <span class="slider"></span>
+  </label>
+
+  <label class="d-flex align-items-center gap-1" title="Ativar/Desativar som de salvamento">
+    <input type="checkbox" id="toggleSom" />
+    <i class="bi bi-volume-up-fill" id="iconeSom" style="color:#e74c3c; font-size:1.25rem;"></i>
+  </label>
+</div>
+
+<!-- MENU DE ABAS -->
+<ul class="nav nav-tabs" id="tabMenu" role="tablist" aria-label="Editor tabs">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">
+      1. Separação dos Poderes
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">
+      2. Constituição de 1988
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">
+      3. Poder Legislativo
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">
+      4. Poder Executivo
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">
+      5. Poder Judiciário
+    </button>
+  </li>
+</ul>
+
+<!-- CONTEÚDO DAS ABAS -->
+<div class="tab-content" id="conteudoAbas">
+  <!-- Abas criadas por JS -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  const conteudoAbas = document.getElementById('conteudoAbas');
+  const tituloPagina = document.getElementById('tituloPagina');
+  const toggleTema = document.getElementById('toggleTema');
+  const toggleSom = document.getElementById('toggleSom');
+  const iconeSom = document.getElementById('iconeSom');
+
+  let autoSaveTimers = {};
+  let textoAnterior = {};
+  let somAtivo = false;
+  let somSave;
+
+  // Cria abas dinamicamente
+  for(let i=1; i<=5; i++){
+    const tab = document.createElement('div');
+    tab.className = `tab-pane fade${i===1?' show active':''}`;
+    tab.id = `tab${i}`;
+    tab.setAttribute('role','tabpanel');
+    tab.setAttribute('aria-labelledby', `tab${i}-tab`);
+    tab.innerHTML = `
+      <input type="text" id="autor${i}" placeholder="@SeuNome" aria-label="Nome do autor do slide ${i}" oninput="atualizarNome(${i})" />
+      <div>Escrito por: <span id="nome${i}">Ninguém ainda</span></div>
+
+      <div class="search-box position-relative">
+        <input type="search" id="search${i}" placeholder="Buscar texto nesta aba..." aria-label="Pesquisar texto na aba ${i}" oninput="filtrarTexto(${i})" autocomplete="off" />
+        <i class="bi bi-search search-icon"></i>
+      </div>
+
+      <textarea id="txt${i}" placeholder="Digite aqui..." aria-label="Conteúdo do slide ${i}" oninput="aoDigitar(${i})" disabled></textarea>
+
+      <div class="status-bar">
+        <span id="contador${i}">Linhas: 0 | Caracteres: 0</span>
+      </div>
+
+      <div class="d-flex mt-2 flex-wrap">
+        <button class="btn btn-success" onclick="salvar(${i})" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar manualmente"><i class="bi bi-check-circle"></i> Salvar</button>
+        <button class="btn btn-danger btn-clear" onclick="limpar(${i})" data-bs-toggle="tooltip" data-bs-placement="top" title="Limpar texto e autor"><i class="bi bi-trash3"></i> Limpar</button>
+        <button class="btn btn-warning" onclick="exportarTexto(${i})" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar conteúdo para arquivo TXT"><i class="bi bi-download"></i> Exportar</button>
+      </div>
+
+      <div class="saved-message" id="msg${i}" role="alert" aria-live="polite" aria-atomic="true"></div>
+    `;
+    conteudoAbas.appendChild(tab);
+  }
+
+  // Inicializar tooltips Bootstrap
+  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+  const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+  });
+
+  // Função para carregar dados do localStorage e aplicar modo tema
+  window.onload = () => {
+    // Modo tema
+    const temaSalvo = localStorage.getItem('temaEscuro');
+    if(temaSalvo === 'false'){
+      document.body.classList.add('light');
+      toggleTema.checked = true;
+    }
+
+    // Som
+    const somSalvo = localStorage.getItem('somAtivo');
+    if(somSalvo === 'true'){
+      somAtivo = true;
+      toggleSom.checked = true;
+      iconeSom.style.color = 'var(--primary-color)';
+    } else {
+      iconeSom.style.color = '#666';
+    }
+
+    // Dados
+    for(let i=1; i<=5; i++){
+      const nome = localStorage.getItem(`autor${i}`);
+      const texto = localStorage.getItem(`texto${i}`);
+
+      if(nome){
+        document.getElementById(`autor${i}`).value = nome;
+        document.getElementById(`nome${i}`).innerText = nome;
+        document.getElementById(`txt${i}`).disabled = false;
+      }
+      if(texto){
+        document.getElementById(`txt${i}`).value = texto;
+        atualizarContador(i);
+        textoAnterior[i] = texto;
+      }
+    }
+
+    atualizarTitulo();
+
+    // Evento atalho Ctrl+S
+    window.addEventListener('keydown', e => {
+      if(e.ctrlKey && e.key.toLowerCase() === 's'){
+        e.preventDefault();
+        const abaAtiva = document.querySelector('.tab-pane.show.active');
+        if(abaAtiva){
+          const id = parseInt(abaAtiva.id.replace('tab',''));
+          salvar(id);
+        }
+      }
+    });
+  }
+
+  // Atualiza título da página com aba ativa
+  function atualizarTitulo(){
+    const abaAtiva = document.querySelector('.nav-link.active');
+    if(abaAtiva){
+      document.title = `Editor - ${abaAtiva.textContent.trim()}`;
+      tituloPagina.textContent = `Editor - ${abaAtiva.textContent.trim()}`;
+    }
+  }
+  // Atualiza nome autor e habilita textarea
+  function atualizarNome(i){
+    const nomeInput = document.getElementById(`autor${i}`);
+    const nomeDisplay = document.getElementById(`nome${i}`);
+    const textoArea = document.getElementById(`txt${i}`);
+
+    const nome = nomeInput.value.trim();
+    nomeDisplay.textContent = nome || 'Ninguém ainda';
+    textoArea.disabled = nome === '';
+
+    if(nome === ''){
+      mostrarMensagem(i, 'Preencha o nome para habilitar o texto', 'msg-red');
+    } else {
+      limparMensagem(i);
+    }
+  }
+
+  // Salvamento automático e manual
+  function aoDigitar(i){
+    mostrarMensagem(i, 'Digitando...', 'msg-yellow');
+
+    atualizarContador(i);
+
+    if(autoSaveTimers[i]) clearTimeout(autoSaveTimers[i]);
+
+    autoSaveTimers[i] = setTimeout(() => {
+      const texto = document.getElementById(`txt${i}`).value;
+      if(textoAnterior[i] !== texto){
+        salvar(i);
+      } else {
+        limparMensagem(i);
+      }
+    }, 5000);
+  }
+
+  // Atualiza contador de linhas e caracteres
+  function atualizarContador(i){
+    const texto = document.getElementById(`txt${i}`).value;
+    const linhas = texto.split('\n').length;
+    const caracteres = texto.length;
+    document.getElementById(`contador${i}`).textContent = `Linhas: ${linhas} | Caracteres: ${caracteres}`;
+  }
+
+  // Salvar
+  function salvar(i){
+    const nomeInput = document.getElementById(`autor${i}`);
+    const textoArea = document.getElementById(`txt${i}`);
+    const nomeDisplay = document.getElementById(`nome${i}`);
+    const msg = document.getElementById(`msg${i}`);
+
+    const nome = nomeInput.value.trim();
+    const texto = textoArea.value;
+
+    if(!nome){
+      mostrarMensagem(i, 'Digite seu nome antes de salvar!', 'msg-red');
+      return;
+    }
+
+    localStorage.setItem(`autor${i}`, nome);
+    localStorage.setItem(`texto${i}`, texto);
+    nomeDisplay.textContent = nome;
+    textoAnterior[i] = texto;
+
+    mostrarMensagem(i, 'Salvo com sucesso!', 'msg-green');
+    if(somAtivo) tocarSomSalvo();
+
+    setTimeout(() => limparMensagem(i), 2500);
+  }
+
+  // Limpar tudo
+  function limpar(i){
+    if(confirm('Tem certeza que deseja apagar tudo?')){
+      localStorage.removeItem(`autor${i}`);
+      localStorage.removeItem(`texto${i}`);
+      document.getElementById(`autor${i}`).value = '';
+      document.getElementById(`txt${i}`).value = '';
+      document.getElementById(`nome${i}`).textContent = 'Ninguém ainda';
+      document.getElementById(`txt${i}`).disabled = true;
+      atualizarContador(i);
+      limparMensagem(i);
+    }
+  }
+
+  // Mostrar mensagem com classe e ícone
+  function mostrarMensagem(i, texto, classe){
+    const msg = document.getElementById(`msg${i}`);
+    const icones = {
+      'msg-green': 'bi-check-circle',
+      'msg-red': 'bi-exclamation-circle',
+      'msg-yellow': 'bi-pencil-square'
+    };
+    msg.innerHTML = `<i class="bi ${icones[classe]}"></i> <span class="${classe}">${texto}</span>`;
+    msg.classList.add('show');
+  }
+
+  // Limpar mensagem
+  function limparMensagem(i){
+    const msg = document.getElementById(`msg${i}`);
+    msg.classList.remove('show');
+    msg.innerHTML = '';
+  }
+
+  // Exportar texto para arquivo .txt
+  function exportarTexto(i){
+    const nome = document.getElementById(`autor${i}`).value.trim() || "SemAutor";
+    const texto = document.getElementById(`txt${i}`).value;
+    const blob = new Blob([texto], {type: "text/plain"});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Slide${i}_${nome.replace("@","")}.txt`;
+    link.click();
+  }
+
+  // Filtrar texto dentro do textarea - simples, mostra só o que tem
+  function filtrarTexto(i){
+    const filtro = document.getElementById(`search${i}`).value.toLowerCase();
+    const txtArea = document.getElementById(`txt${i}`);
+    const textoOriginal = localStorage.getItem(`texto${i}`) || '';
+
+    if(!filtro){
+      txtArea.value = textoOriginal;
+    } else {
+      const linhas = textoOriginal.split('\n');
+      const linhasFiltradas = linhas.filter(l => l.toLowerCase().includes(filtro));
+      txtArea.value = linhasFiltradas.join('\n');
+    }
+    atualizarContador(i);
+  }
+
+  // Toggle tema claro/escuro e salvar no localStorage
+  toggleTema.addEventListener('change', () => {
+    document.body.classList.toggle('light', toggleTema.checked);
+    localStorage.setItem('temaEscuro', toggleTema.checked ? 'false' : 'true');
+  });
+
+  // Toggle som de salvamento
+  toggleSom.addEventListener('change', () => {
+    somAtivo = toggleSom.checked;
+    iconeSom.style.color = somAtivo ? 'var(--primary-color)' : '#666';
+    localStorage.setItem('somAtivo', somAtivo.toString());
+  });
+
+  // Atualiza título da página ao trocar de aba
+  const tabLinks = document.querySelectorAll('.nav-link');
+  tabLinks.forEach(link => {
+    link.addEventListener('shown.bs.tab', () => {
+      atualizarTitulo();
+    });
+  });
+
+  // Função para tocar som de salvamento (beep curto)
+  function tocarSomSalvo(){
+    if(!somSave){
+      somSave = new Audio("data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YRAAAAAA"); 
+    }
+    somSave.play().catch(()=>{}); // evita erros se bloqueado
+  }
+
+  // Undo/Redo básico usando execCommand (funciona na maioria dos navegadores)
+  document.addEventListener('keydown', e => {
+    if(document.activeElement.tagName === 'TEXTAREA'){
+      if(e.ctrlKey && e.key.toLowerCase() === 'z'){
+        e.preventDefault();
+        document.execCommand('undo');
+      } else if(e.ctrlKey && e.key.toLowerCase() === 'y'){
+        e.preventDefault();
+        document.execCommand('redo');
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
