@@ -5,22 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Poderes da República - Editor</title>
 
-  <!-- Bootstrap -->
+  <!-- Bootstrap + Ícones -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- Ícones -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
   <style>
     body {
-      background: #000;
+      background: #0d0d0d;
       color: #fff;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       padding: 20px;
     }
 
     .tab-content {
-      background: #111;
+      background: #1a1a1a;
       padding: 25px;
       border-radius: 10px;
       margin-top: 20px;
@@ -40,7 +38,7 @@
     }
 
     input, textarea {
-      background: #1c1c1c;
+      background: #111;
       color: #eee;
       border: 1px solid #444;
       border-radius: 6px;
@@ -57,7 +55,7 @@
 
     .saved-message {
       font-size: 0.9em;
-      color: #2ecc71;
+      margin-top: 5px;
     }
 
     .btn i {
@@ -67,47 +65,56 @@
     .btn-clear {
       margin-left: 10px;
     }
+
+    .msg-green { color: #2ecc71; }
+    .msg-red { color: #e74c3c; }
+    .msg-yellow { color: #f1c40f; }
+
+    .d-flex {
+      gap: 10px;
+      flex-wrap: wrap;
+    }
   </style>
 </head>
 <body>
 
-<h1 class="text-center mb-4" style="color:#e74c3c;">Os tópicos estão organizados conforme a ordem dos slides.</h1>
+<h1 class="text-center mb-4" style="color:#e74c3c;">Editor - Poderes da República</h1>
 
 <!-- MENU DE ABAS -->
 <ul class="nav nav-tabs" id="tabMenu">
-  <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab1">1. Teoria da Separação dos Poderes</a></li>
-  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab2">2. Constituição Federal de 1988</a></li>
+  <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab1">1. Separação dos Poderes</a></li>
+  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab2">2. Constituição de 1988</a></li>
   <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab3">3. Poder Legislativo</a></li>
   <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab4">4. Poder Executivo</a></li>
   <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab5">5. Poder Judiciário</a></li>
 </ul>
 
 <!-- CONTEÚDO DAS ABAS -->
-<div class="tab-content">
-  <!-- Gera as 5 abas com JS -->
-</div>
+<div class="tab-content" id="conteudoAbas"></div>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  const tabContent = document.querySelector('.tab-content');
+  const conteudoAbas = document.getElementById('conteudoAbas');
+  let autoSaveTimers = {};
 
   for (let i = 1; i <= 5; i++) {
-    const section = document.createElement('div');
-    section.className = `tab-pane fade${i === 1 ? ' show active' : ''}`;
-    section.id = `tab${i}`;
-    section.innerHTML = `
+    const tab = document.createElement('div');
+    tab.className = `tab-pane fade${i === 1 ? ' show active' : ''}`;
+    tab.id = `tab${i}`;
+    tab.innerHTML = `
       <input type="text" id="autor${i}" placeholder="@SeuNome" oninput="atualizarNome(${i})" />
       <div>Escrito por: <span id="nome${i}">Ninguém ainda</span></div>
-      <textarea id="txt${i}" placeholder="Digite aqui..." oninput="digitando(${i})"></textarea>
-      <div class="d-flex">
-        <button class="btn btn-success me-2" onclick="salvar(${i})"><i class="bi bi-save"></i>Salvar</button>
+      <textarea id="txt${i}" placeholder="Digite aqui..." oninput="aoDigitar(${i})" disabled></textarea>
+      <div class="d-flex mt-2">
+        <button class="btn btn-success" onclick="salvar(${i})"><i class="bi bi-check-circle"></i>Salvar</button>
         <button class="btn btn-danger btn-clear" onclick="limpar(${i})"><i class="bi bi-trash3"></i>Limpar</button>
+        <button class="btn btn-warning" onclick="exportarTexto(${i})"><i class="bi bi-download"></i>Exportar</button>
       </div>
-      <div class="saved-message mt-2" id="msg${i}"></div>
+      <div class="saved-message" id="msg${i}"></div>
     `;
-    tabContent.appendChild(section);
+    conteudoAbas.appendChild(tab);
   }
 
   window.onload = () => {
@@ -118,6 +125,7 @@
       if (nome) {
         document.getElementById(`autor${i}`).value = nome;
         document.getElementById(`nome${i}`).innerText = nome;
+        document.getElementById(`txt${i}`).disabled = false;
       }
 
       if (texto) {
@@ -129,9 +137,10 @@
   function salvar(i) {
     const nome = document.getElementById(`autor${i}`).value.trim();
     const texto = document.getElementById(`txt${i}`).value;
+    const msg = document.getElementById(`msg${i}`);
 
     if (!nome) {
-      alert("Digite seu nome antes de salvar!");
+      msg.innerHTML = "<i class='bi bi-exclamation-circle'></i> <span class='msg-red'>Digite seu nome antes de salvar!</span>";
       return;
     }
 
@@ -139,33 +148,44 @@
     localStorage.setItem(`texto${i}`, texto);
     document.getElementById(`nome${i}`).innerText = nome;
 
-    const msg = document.getElementById(`msg${i}`);
-    msg.innerHTML = "<i class='bi bi-check-circle'></i> Salvo com sucesso!";
-
-    setTimeout(() => msg.innerHTML = "", 2000);
+    msg.innerHTML = "<i class='bi bi-check-circle'></i> <span class='msg-green'>Salvo com sucesso!</span>";
+    setTimeout(() => msg.innerHTML = "", 2500);
   }
 
   function limpar(i) {
     if (confirm("Tem certeza que deseja apagar tudo?")) {
+      localStorage.removeItem(`autor${i}`);
+      localStorage.removeItem(`texto${i}`);
       document.getElementById(`autor${i}`).value = "";
       document.getElementById(`txt${i}`).value = "";
       document.getElementById(`nome${i}`).innerText = "Ninguém ainda";
-      document.getElementById(`msg${i}`).innerText = "";
-      localStorage.removeItem(`autor${i}`);
-      localStorage.removeItem(`texto${i}`);
+      document.getElementById(`txt${i}`).disabled = true;
+      document.getElementById(`msg${i}`).innerHTML = "<i class='bi bi-x-circle'></i> <span class='msg-red'>Dados apagados!</span>";
     }
   }
 
   function atualizarNome(i) {
     const nome = document.getElementById(`autor${i}`).value.trim();
     document.getElementById(`nome${i}`).innerText = nome || "Ninguém ainda";
+    document.getElementById(`txt${i}`).disabled = !nome;
   }
 
-  function digitando(i) {
+  function aoDigitar(i) {
     const msg = document.getElementById(`msg${i}`);
-    msg.innerHTML = "<i class='bi bi-pencil-square'></i> Digitando...";
-    clearTimeout(msg.timeout);
-    msg.timeout = setTimeout(() => msg.innerHTML = "", 1500);
+    msg.innerHTML = "<i class='bi bi-pencil-square'></i> <span class='msg-yellow'>Digitando...</span>";
+
+    clearTimeout(autoSaveTimers[i]);
+    autoSaveTimers[i] = setTimeout(() => salvar(i), 2000);
+  }
+
+  function exportarTexto(i) {
+    const nome = document.getElementById(`autor${i}`).value.trim() || "SemAutor";
+    const texto = document.getElementById(`txt${i}`).value;
+    const blob = new Blob([texto], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Slide${i}_${nome.replace("@", "")}.txt`;
+    link.click();
   }
 </script>
 
