@@ -211,4 +211,79 @@
 
     // Inicializa tooltips Bootstrap
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(tooltipTriggerEl => new
+    tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    // Carrega tema salvo
+    const temaSalvo = localStorage.getItem('temaEscuro');
+    if (temaSalvo === 'false') {
+      document.body.classList.add('light');
+      toggleTema.checked = true;
+    }
+
+    // Carrega estado do som
+    const somSalvo = localStorage.getItem('somAtivo');
+    if (somSalvo === 'true') {
+      somAtivo = true;
+      toggleSom.checked = true;
+      iconeSom.style.color = 'var(--primary-color)';
+    } else {
+      iconeSom.style.color = '#666';
+    }
+
+    // Configura listeners tema e som
+    toggleTema.addEventListener('change', () => {
+      if (toggleTema.checked) {
+        document.body.classList.add('light');
+        localStorage.setItem('temaEscuro', 'false');
+      } else {
+        document.body.classList.remove('light');
+        localStorage.setItem('temaEscuro', 'true');
+      }
+    });
+    toggleSom.addEventListener('change', () => {
+      somAtivo = toggleSom.checked;
+      localStorage.setItem('somAtivo', somAtivo ? 'true' : 'false');
+      iconeSom.style.color = somAtivo ? 'var(--primary-color)' : '#666';
+    });
+
+    // Escuta dados Firebase para cada aba
+    for (let i = 1; i <= 5; i++) {
+      db.ref(`slides/slide${i}`).on('value', snapshot => {
+        const data = snapshot.val();
+        if (data) {
+          const autorInput = document.getElementById(`autor${i}`);
+          const nomeDisplay = document.getElementById(`nome${i}`);
+          const textoArea = document.getElementById(`txt${i}`);
+
+          autorInput.value = data.autor || '';
+          nomeDisplay.textContent = data.autor || 'Ninguém ainda';
+          textoArea.value = data.texto || '';
+          textoArea.disabled = !data.autor;
+
+          textoAnterior[i] = data.texto || '';
+          atualizarContador(i);
+          limparMensagem(i);
+        }
+      });
+    }
+
+    // Atualiza título quando troca de aba
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('shown.bs.tab', atualizarTitulo);
+    });
+
+    // Atalho Ctrl+S para salvar aba ativa
+    window.addEventListener('keydown', e => {
+      if (e.ctrlKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        const abaAtiva = document.querySelector('.tab-pane.show.active');
+        if (abaAtiva) {
+          const id = parseInt(abaAtiva.id.replace('tab', ''));
+          salvar(id);
+        }
+      }
+    });
+
+    atualizarTitulo();
+  });
+})();
