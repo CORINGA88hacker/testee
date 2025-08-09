@@ -1,125 +1,125 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Painel Admin - Editar Abas e Autor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Painel Admin (acesso por link secreto)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { background:#f7f7f9; }
+    .hidden { display:none!important; }
+  </style>
 </head>
 <body>
-
   <div class="container mt-4">
-    <h2>Painel Admin</h2>
+    <h2>Painel Admin — Acesso por link secreto</h2>
+    <p class="text-muted">Envie o link com a chave apenas para as 5 pessoas que podem postar.</p>
 
-    <div class="mb-4">
-      <label for="autorInput" class="form-label">Nome do Autor</label>
-      <input type="text" id="autorInput" class="form-control" placeholder="Digite o nome do autor" />
-      <button id="saveAutorBtn" class="btn btn-primary mt-2">Salvar Autor</button>
+    <!-- Mensagem se sem acesso -->
+    <div id="noAccess" class="alert alert-danger" role="alert" style="display:none;">
+      Acesso negado. Você precisa do link secreto para entrar.
     </div>
 
-    <hr />
+    <!-- Painel -->
+    <div id="panel" class="hidden">
+      <div class="mb-4">
+        <label for="autorSelect" class="form-label">Autor (escolha seu nome)</label>
+        <select id="autorSelect" class="form-select"></select>
+        <small class="form-text text-muted">Os nomes abaixo são os 5 autorizados — você pode editar essa lista no código ou no DB.</small>
+      </div>
 
-    <h3>Abas</h3>
-    <div id="abasList" class="mb-4"></div>
+      <hr/>
+      <h4>Nova Aba / Postagem</h4>
+      <div class="mb-3">
+        <input id="newTitle" class="form-control mb-2" placeholder="Título da aba" />
+        <textarea id="newText" class="form-control mb-2" rows="5" placeholder="Conteúdo da aba"></textarea>
+        <div class="d-flex gap-2">
+          <button id="createBtn" class="btn btn-success">Criar Aba</button>
+          <button id="refreshBtn" class="btn btn-secondary">Recarregar lista</button>
+        </div>
+      </div>
 
-    <button id="addAbaBtn" class="btn btn-success mb-3">Adicionar Aba</button>
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyBHIc2E4XwRO5FXo4uHlTQVRArOis73MjE",
-        authDomain: "projeto-deus-yato-928-sk-default-rtdb.firebaseapp.com",
-        databaseURL: "https://projeto-deus-yato-928-sk-default-rtdb.firebaseio.com",
-        projectId: "projeto-deus-yato-928-sk-default-rtdb",
-        storageBucket: "projeto-deus-yato-928-sk-default-rtdb.appspot.com",
-        messagingSenderId: "790408726854",
-        appId: "1:790408726854:android:e2f0de7b7d5dba96b0fd47"
-      };
-
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-
-      const autorInput = document.getElementById('autorInput');
-      const saveAutorBtn = document.getElementById('saveAutorBtn');
-      const abasList = document.getElementById('abasList');
-      const addAbaBtn = document.getElementById('addAbaBtn');
-
-      // Carregar autor
-      db.ref('config/autor').once('value').then(snapshot => {
-        autorInput.value = snapshot.val() || '';
-      });
-
-      // Salvar autor
-      saveAutorBtn.onclick = () => {
-        const autor = autorInput.value.trim();
-        if (autor.length === 0) {
-          alert('Digite um nome válido para o autor.');
-          return;
-        }
-        db.ref('config/autor').set(autor)
-          .then(() => alert('Nome do autor salvo com sucesso!'))
-          .catch(() => alert('Erro ao salvar autor.'));
-      };
-
-      // Carregar abas e mostrar na lista
-      function carregarAbas() {
-        abasList.innerHTML = '';
-        db.ref('abas').once('value').then(snapshot => {
-          const data = snapshot.val() || {};
-          let i = 1;
-          for (const key in data) {
-            criarEditorAba(key, data[key], i);
-            i++;
-          }
-        });
-      }
-
-      function criarEditorAba(key, aba, index) {
-        const div = document.createElement('div');
-        div.classList.add('mb-3', 'border', 'p-3', 'rounded');
-
-        div.innerHTML = `
-          <h5>Aba ${index}</h5>
-          <label>Título:</label>
-          <input type="text" class="form-control mb-2" value="${aba.title || ''}" />
-          <label>Texto:</label>
-          <textarea class="form-control mb-2" rows="4">${aba.text || ''}</textarea>
-          <button class="btn btn-danger btn-sm">Excluir Aba</button>
-        `;
-
-        const [titleInput, textInput, deleteBtn] = div.querySelectorAll('input, textarea, button');
-
-        titleInput.onchange = () => {
-          db.ref(`abas/${key}/title`).set(titleInput.value);
-        };
-        textInput.onchange = () => {
-          db.ref(`abas/${key}/text`).set(textInput.value);
-        };
-        deleteBtn.onclick = () => {
-          if (confirm(`Excluir aba ${index}?`)) {
-            db.ref(`abas/${key}`).remove().then(() => carregarAbas());
-          }
-        };
-
-        abasList.appendChild(div);
-      }
-
-      addAbaBtn.onclick = () => {
-        // Criar nova aba com ID único (timestamp)
-        const novoKey = 'aba_' + Date.now();
-        db.ref(`abas/${novoKey}`).set({
-          title: 'Título da nova aba',
-          text: 'Conteúdo da nova aba'
-        }).then(() => carregarAbas());
-      };
-
-      carregarAbas();
-    </script>
-
+      <hr/>
+      <h4>Abas Existentes</h4>
+      <div id="abasList" class="mb-4"></div>
+    </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
-</body>
-</html>
+  <script>
+  /***** CONFIG - altere conforme necessário *****/
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyBHIc2E4XwRO5FXo4uHlTQVRArOis73MjE",
+    authDomain: "projeto-deus-yato-928-sk-default-rtdb.firebaseapp.com",
+    databaseURL: "https://projeto-deus-yato-928-sk-default-rtdb.firebaseio.com",
+    projectId: "projeto-deus-yato-928-sk-default-rtdb",
+    storageBucket: "projeto-deus-yato-928-sk-default-rtdb.appspot.com",
+    messagingSenderId: "790408726854",
+    appId: "1:790408726854:android:e2f0de7b7d5dba96b0fd47"
+  };
+
+  // CHAVE SECRETA - troque por uma sua (envie o link /admin.html?key=XXXXX para os 5)
+  const SECRET_KEY = 'MEU_LINK_SECRETO_12345';
+  // Lista padrão dos 5 autores (você pode editar aqui ou salvar em DB em /config/authors)
+  const DEFAULT_AUTHORS = [
+    "Autor 1",
+    "Autor 2",
+    "Autor 3",
+    "Autor 4",
+    "Autor 5"
+  ];
+  /***********************************************/
+
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const db = firebase.database();
+
+  // elementos
+  const panel = document.getElementById('panel');
+  const noAccess = document.getElementById('noAccess');
+  const autorSelect = document.getElementById('autorSelect');
+  const newTitle = document.getElementById('newTitle');
+  const newText = document.getElementById('newText');
+  const createBtn = document.getElementById('createBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const abasList = document.getElementById('abasList');
+
+  // função de escape simples para evitar injeção de HTML ao renderizar inputs
+  function escapeHtml(str) {
+    if (!str && str !== '') return '';
+    return String(str)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  // checar chave na querystring
+  function getQueryParam(name){
+    const url = new URL(location.href);
+    return url.searchParams.get(name);
+  }
+
+  function showNoAccess(){
+    noAccess.style.display = 'block';
+    panel.classList.add('hidden');
+  }
+  function showPanel(){
+    noAccess.style.display = 'none';
+    panel.classList.remove('hidden');
+  }
+
+  // autorizar acesso
+  const providedKey = getQueryParam('key') || '';
+  if (providedKey !== SECRET_KEY) {
+    showNoAccess();
+  } else {
+    showPanel();
+    init();
+  }
+
+  // Inicializa: carrega lista de autores e abas
+  function init(){
+    // Tentamos carregar autores da DB em /config/authors. Se não existir, usam
