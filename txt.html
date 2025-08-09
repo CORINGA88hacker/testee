@@ -3,80 +3,124 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Tabs Avançadas com 20 Animações</title>
+<title>Site com abas dinâmicas do Firebase</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 <style>
-  .nav-link {
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    perspective: 1000px;
-    user-select: none;
-    transition: color 0.3s ease;
+  .nav-tabs {
+    justify-content: center;
   }
-  .nav-link.active {
-    color: #ff4500;
+  .tab-title {
+    text-align: center;
+    margin-top: 5px;
+    font-weight: bold;
+    color: #555;
   }
-  /* (Aqui você pode manter ou remover as animações se quiser) */
 </style>
 </head>
 <body>
 
 <div class="container mt-4">
 
-  <ul class="nav nav-tabs" id="myTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">1</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">2</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">3</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">4</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">5</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab6-tab" data-bs-toggle="tab" data-bs-target="#tab6" type="button" role="tab" aria-controls="tab6" aria-selected="false">6 - PDF</button>
-    </li>
+  <!-- Abas -->
+  <ul class="nav nav-tabs" id="tabs" role="tablist">
+    <!-- abas serão criadas pelo JS -->
   </ul>
 
-  <div class="tab-content" id="myTabContent" style="min-height: 300px;">
-    <div class="tab-pane fade show active p-3" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-      <h3>Aba 1</h3>
-      <p>Conteúdo da aba 1.</p>
-    </div>
-    <div class="tab-pane fade p-3" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-      <h3>Aba 2</h3>
-      <p>Conteúdo da aba 2.</p>
-    </div>
-    <div class="tab-pane fade p-3" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-      <h3>Aba 3</h3>
-      <p>Conteúdo da aba 3.</p>
-    </div>
-    <div class="tab-pane fade p-3" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
-      <h3>Aba 4</h3>
-      <p>Conteúdo da aba 4.</p>
-    </div>
-    <div class="tab-pane fade p-3" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
-      <h3>Aba 5</h3>
-      <p>Conteúdo da aba 5.</p>
-    </div>
-    <div class="tab-pane fade p-3" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
-      <h3>Aba 6 - Visualizador de PDF</h3>
-      <iframe
-        src="slides.pdf"
-        style="width: 100%; height: 600px; border: 1px solid #ccc;"
-        frameborder="0"
-      ></iframe>
-    </div>
+  <!-- Conteúdo das abas -->
+  <div class="tab-content mt-3" id="tabContent">
+    <!-- conteúdo será criado pelo JS -->
   </div>
 
 </div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+  // Sua configuração do Firebase
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_AUTH_DOMAIN",
+    databaseURL: "SUA_DATABASE_URL",
+    projectId: "SEU_PROJECT_ID",
+    storageBucket: "SEU_STORAGE_BUCKET",
+    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+    appId: "SEU_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const tabsEl = document.getElementById('tabs');
+  const tabContentEl = document.getElementById('tabContent');
+
+  // Função pra criar abas e conteúdo dinamicamente
+  function createTabs(data) {
+    tabsEl.innerHTML = '';
+    tabContentEl.innerHTML = '';
+
+    let first = true;
+    let index = 1;
+
+    for (const key in data) {
+      const item = data[key];
+      const id = `tab${index}`;
+
+      // Criar botão da aba
+      const li = document.createElement('li');
+      li.classList.add('nav-item');
+      li.setAttribute('role', 'presentation');
+
+      const btn = document.createElement('button');
+      btn.classList.add('nav-link');
+      if (first) btn.classList.add('active');
+      btn.id = `${id}-tab`;
+      btn.setAttribute('data-bs-toggle', 'tab');
+      btn.setAttribute('data-bs-target', `#${id}`);
+      btn.type = 'button';
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-controls', id);
+      btn.setAttribute('aria-selected', first ? 'true' : 'false');
+      btn.textContent = `Aba ${index}`;
+
+      li.appendChild(btn);
+      tabsEl.appendChild(li);
+
+      // Criar título embaixo da aba
+      const titleDiv = document.createElement('div');
+      titleDiv.classList.add('tab-title');
+      titleDiv.textContent = item.title || 'Sem título';
+
+      li.appendChild(titleDiv);
+
+      // Criar conteúdo da aba
+      const contentDiv = document.createElement('div');
+      contentDiv.classList.add('tab-pane', 'fade');
+      if (first) contentDiv.classList.add('show', 'active');
+      contentDiv.id = id;
+      contentDiv.setAttribute('role', 'tabpanel');
+      contentDiv.setAttribute('aria-labelledby', `${id}-tab`);
+      contentDiv.innerHTML = `<p>${item.text || 'Sem conteúdo'}</p>`;
+
+      tabContentEl.appendChild(contentDiv);
+
+      first = false;
+      index++;
+    }
+  }
+
+  // Ler dados do Firebase
+  db.ref('abas').on('value', snapshot => {
+    const data = snapshot.val();
+    if(data) {
+      createTabs(data);
+    } else {
+      tabsEl.innerHTML = '<li>Nenhuma aba encontrada</li>';
+      tabContentEl.innerHTML = '';
+    }
+  });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
