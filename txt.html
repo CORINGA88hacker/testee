@@ -8,15 +8,33 @@
   <style>
     .nav-tabs {
       justify-content: center;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+      border-bottom: 2px solid #ddd;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 10px;
+    }
+    .nav-item .nav-link {
+      margin-bottom: 5px;
     }
     .tab-title {
       text-align: center;
-      margin-top: 0.3rem;
       font-weight: 600;
-      color: #555;
-      font-size: 0.9rem;
-      user-select: none;
+      color: #333;
+      font-size: 0.85rem;
+      max-width: 140px;
+      white-space: normal;
+      line-height: 1.2;
+    }
+    .tab-pane {
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #f9f9f9;
+      min-height: 150px;
     }
     footer {
       margin-top: 2rem;
@@ -86,13 +104,12 @@
         btn.setAttribute('aria-selected', primeiraAba ? 'true' : 'false');
         btn.textContent = `Aba ${indice}`;
 
-        li.appendChild(btn);
-
         const titleDiv = document.createElement('div');
         titleDiv.classList.add('tab-title');
         titleDiv.textContent = aba.title || 'Sem título';
-        li.appendChild(titleDiv);
 
+        li.appendChild(btn);
+        li.appendChild(titleDiv);
         tabsEl.appendChild(li);
 
         const contentDiv = document.createElement('div');
@@ -110,7 +127,6 @@
       }
     }
 
-    // Puxa abas do Firebase
     db.ref('abas').on('value', snapshot => {
       const data = snapshot.val();
       if (data) {
@@ -121,7 +137,6 @@
       }
     });
 
-    // Puxa nome do autor
     db.ref('config/autor').on('value', snapshot => {
       const autor = snapshot.val();
       autorFooter.textContent = autor ? `Autor: ${autor}` : 'Autor não definido';
