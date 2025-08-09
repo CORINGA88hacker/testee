@@ -3,151 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Projeto com 12 Bibliotecas JS + CSS3</title>
-
-  <!-- 1. Bootstrap CSS (framework CSS e JS) -->
+  <title>Site com 6 abas + Apresentação Google Slides</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- 2. FontAwesome (ícones) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-
-  <!-- 3. Animate.css (animações CSS) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
-
-  <!-- 4. Slick Carousel CSS (carrossel) -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" rel="stylesheet" />
-
-  <!-- 5. Tailwind CSS (opcional, utility-first CSS framework) -->
-  <!-- Apenas um exemplo, você pode usar só Bootstrap se quiser -->
-  <!--<link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet" />-->
-
-  <style>
-    body { padding: 2rem; }
-    .slick-slide img { width: 100%; height: 200px; object-fit: cover; }
-    #countdown { font-size: 2rem; font-weight: bold; color: #e74c3c; }
-  </style>
 </head>
 <body>
 
-  <h1 class="mb-4 animate__animated animate__fadeInDown">Demo: 12 Bibliotecas JS + CSS3</h1>
+<div class="container mt-4">
 
-  <!-- 6. Bootstrap tooltip (JS) -->
-  <button type="button" class="btn btn-primary" data-bs-toggle="tooltip" title="Tooltip do Bootstrap!">
-    Passe o mouse aqui
-  </button>
+  <!-- Navegação das abas -->
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">1</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">2</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">3</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">4</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">5</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab6-tab" data-bs-toggle="tab" data-bs-target="#tab6" type="button" role="tab" aria-controls="tab6" aria-selected="false">6. Apresentação</button>
+    </li>
+  </ul>
 
-  <!-- 7. Slick Carousel -->
-  <div class="my-4 slider">
-    <div><img src="https://picsum.photos/id/1015/400/200" alt="1" /></div>
-    <div><img src="https://picsum.photos/id/1016/400/200" alt="2" /></div>
-    <div><img src="https://picsum.photos/id/1018/400/200" alt="3" /></div>
+  <!-- Conteúdo das abas -->
+  <div class="tab-content" id="myTabContent" style="min-height: 650px;">
+    <div class="tab-pane fade show active p-3" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+      <h3>Aba 1</h3>
+      <p>Conteúdo da primeira aba.</p>
+    </div>
+    <div class="tab-pane fade p-3" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
+      <h3>Aba 2</h3>
+      <p>Conteúdo da segunda aba.</p>
+    </div>
+    <div class="tab-pane fade p-3" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
+      <h3>Aba 3</h3>
+      <p>Conteúdo da terceira aba.</p>
+    </div>
+    <div class="tab-pane fade p-3" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
+      <h3>Aba 4</h3>
+      <p>Conteúdo da quarta aba.</p>
+    </div>
+    <div class="tab-pane fade p-3" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
+      <h3>Aba 5</h3>
+      <p>Conteúdo da quinta aba.</p>
+    </div>
+    <div class="tab-pane fade p-3" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
+      <h3>Apresentação Google Slides</h3>
+      <iframe 
+        src="https://docs.google.com/presentation/d/e/2PACX-1vQSEUoKnsTWvD0HRxKIiKv2QSTRSBk4owC/publish?start=true&loop=true&delayms=3000" 
+        frameborder="0" 
+        width="100%" 
+        height="600" 
+        allowfullscreen 
+        mozallowfullscreen 
+        webkitallowfullscreen>
+      </iframe>
+    </div>
   </div>
 
-  <!-- 8. Moment.js (para datas) -->
-  <p>Data e hora atual: <span id="time"></span></p>
+</div>
 
-  <!-- 9. CountDown.js (simples contagem regressiva manual) -->
-  <p>Contagem regressiva para 2025: <span id="countdown"></span></p>
-
-  <!-- 10. SweetAlert2 (alertas estilizados) -->
-  <button id="alertBtn" class="btn btn-warning">Mostrar alerta estilizado</button>
-
-  <!-- 11. Clipboard.js (copiar texto) -->
-  <input id="copyInput" type="text" value="Texto para copiar" readonly style="width: 300px" />
-  <button id="copyBtn" class="btn btn-success">Copiar texto</button>
-
-  <!-- 12. AOS - Animate On Scroll (scroll animations) -->
-  <div data-aos="fade-up" style="margin-top: 50px; background:#eee; padding: 20px;">
-    Este texto aparece com animação quando você rola a página.
-  </div>
-
-  <!-- SCRIPTS -->
-
-  <!-- 1 + 6 Bootstrap JS bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <!-- 8. Moment.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
-
-  <!-- 7. Slick Carousel JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-
-  <!-- 10. SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- 11. Clipboard.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
-
-  <!-- 12. AOS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
-
-  <script>
-    // Tooltip Bootstrap ativar
-    const tooltipTriggerList = [...document.querySelectorAll('[data-bs-toggle="tooltip"]')]
-    tooltipTriggerList.forEach(t => new bootstrap.Tooltip(t))
-
-    // Slick Carousel iniciar
-    document.querySelector('.slider').slick({
-      dots: true,
-      infinite: true,
-      slidesToShow: 1,
-      slidesToScroll: 1,
-      autoplay: true,
-      autoplaySpeed: 2500,
-    });
-
-    // Atualizar data/hora com Moment.js
-    function atualizarHora(){
-      document.getElementById('time').textContent = moment().format('LLLL');
-    }
-    atualizarHora();
-    setInterval(atualizarHora, 1000);
-
-    // Countdown simples para 1º jan 2025
-    function countdown(){
-      const fim = moment('2025-01-01');
-      const agora = moment();
-      const duracao = moment.duration(fim.diff(agora));
-
-      if(duracao.asSeconds() <= 0){
-        document.getElementById('countdown').textContent = 'Já chegou 2025!';
-        return;
-      }
-
-      const dias = Math.floor(duracao.asDays());
-      const horas = duracao.hours();
-      const minutos = duracao.minutes();
-      const segundos = duracao.seconds();
-
-      document.getElementById('countdown').textContent = `${dias}d ${horas}h ${minutos}m ${segundos}s`;
-    }
-    countdown();
-    setInterval(countdown, 1000);
-
-    // SweetAlert2 evento
-    document.getElementById('alertBtn').addEventListener('click', () => {
-      Swal.fire({
-        title: 'Olá!',
-        text: 'Este é um alerta estilizado usando SweetAlert2.',
-        icon: 'success',
-        confirmButtonText: 'Fechar'
-      });
-    });
-
-    // Clipboard.js copiar texto
-    const clipboard = new ClipboardJS('#copyBtn', {
-      target: () => document.getElementById('copyInput')
-    });
-    clipboard.on('success', () => alert('Texto copiado com sucesso!'));
-    clipboard.on('error', () => alert('Erro ao copiar texto!'));
-
-    // AOS inicializar
-    AOS.init({
-      duration: 1200,
-    });
-  </script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
