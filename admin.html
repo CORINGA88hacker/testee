@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin Painel</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+
+<div class="container mt-4">
+  <h2>Painel Admin - Editar Abas</h2>
+
+  <form id="form">
+    <div class="mb-3">
+      <label for="abaNumber" class="form-label">Número da Aba (1-20)</label>
+      <input type="number" class="form-control" id="abaNumber" min="1" max="20" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="title" class="form-label">Título da Aba</label>
+      <input type="text" class="form-control" id="title" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="text" class="form-label">Conteúdo da Aba</label>
+      <textarea class="form-control" id="text" rows="5" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Salvar Aba</button>
+  </form>
+
+  <div id="message" class="mt-3"></div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "SEU_AUTH_DOMAIN",
+    databaseURL: "SUA_DATABASE_URL",
+    projectId: "SEU_PROJECT_ID",
+    storageBucket: "SEU_STORAGE_BUCKET",
+    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+    appId: "SEU_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const form = document.getElementById('form');
+  const message = document.getElementById('message');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const abaNum = form.abaNumber.value.trim();
+    const title = form.title.value.trim();
+    const text = form.text.value.trim();
+
+    if (abaNum && title && text) {
+      // Salva no Firebase na chave abas/abaNum
+      db.ref('abas/aba' + abaNum).set({ title, text })
+        .then(() => {
+          message.innerHTML = `<div class="alert alert-success">Aba ${abaNum} salva com sucesso!</div>`;
+          form.reset();
+        })
+        .catch(err => {
+          message.innerHTML = `<div class="alert alert-danger">Erro ao salvar: ${err.message}</div>`;
+        });
+    } else {
+      message.innerHTML = `<div class="alert alert-warning">Preencha todos os campos!</div>`;
+    }
+  });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
