@@ -1,81 +1,125 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Admin Painel</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel Admin - Editar Abas e Autor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
 
-<div class="container mt-4">
-  <h2>Painel Admin - Editar Abas</h2>
+  <div class="container mt-4">
+    <h2>Painel Admin</h2>
 
-  <form id="form">
-    <div class="mb-3">
-      <label for="abaNumber" class="form-label">Número da Aba (1-20)</label>
-      <input type="number" class="form-control" id="abaNumber" min="1" max="20" required>
+    <div class="mb-4">
+      <label for="autorInput" class="form-label">Nome do Autor</label>
+      <input type="text" id="autorInput" class="form-control" placeholder="Digite o nome do autor" />
+      <button id="saveAutorBtn" class="btn btn-primary mt-2">Salvar Autor</button>
     </div>
 
-    <div class="mb-3">
-      <label for="title" class="form-label">Título da Aba</label>
-      <input type="text" class="form-control" id="title" required>
-    </div>
+    <hr />
 
-    <div class="mb-3">
-      <label for="text" class="form-label">Conteúdo da Aba</label>
-      <textarea class="form-control" id="text" rows="5" required></textarea>
-    </div>
+    <h3>Abas</h3>
+    <div id="abasList" class="mb-4"></div>
 
-    <button type="submit" class="btn btn-primary">Salvar Aba</button>
-  </form>
+    <button id="addAbaBtn" class="btn btn-success mb-3">Adicionar Aba</button>
 
-  <div id="message" class="mt-3"></div>
-</div>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBHIc2E4XwRO5FXo4uHlTQVRArOis73MjE",
+        authDomain: "projeto-deus-yato-928-sk-default-rtdb.firebaseapp.com",
+        databaseURL: "https://projeto-deus-yato-928-sk-default-rtdb.firebaseio.com",
+        projectId: "projeto-deus-yato-928-sk-default-rtdb",
+        storageBucket: "projeto-deus-yato-928-sk-default-rtdb.appspot.com",
+        messagingSenderId: "790408726854",
+        appId: "1:790408726854:android:e2f0de7b7d5dba96b0fd47"
+      };
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.database();
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyBHIc2E4XwRO5FXo4uHlTQVRArOis73MjE",
-    authDomain: "projeto-deus-yato-928-sk-default-rtdb.firebaseapp.com",
-    databaseURL: "https://projeto-deus-yato-928-sk-default-rtdb.firebaseio.com",
-    projectId: "projeto-deus-yato-928-sk-default-rtdb",
-    storageBucket: "projeto-deus-yato-928-sk-default-rtdb.appspot.com",
-    messagingSenderId: "790408726854",
-    appId: "1:790408726854:android:e2f0de7b7d5dba96b0fd47"
-  };
+      const autorInput = document.getElementById('autorInput');
+      const saveAutorBtn = document.getElementById('saveAutorBtn');
+      const abasList = document.getElementById('abasList');
+      const addAbaBtn = document.getElementById('addAbaBtn');
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
+      // Carregar autor
+      db.ref('config/autor').once('value').then(snapshot => {
+        autorInput.value = snapshot.val() || '';
+      });
 
-  const form = document.getElementById('form');
-  const message = document.getElementById('message');
+      // Salvar autor
+      saveAutorBtn.onclick = () => {
+        const autor = autorInput.value.trim();
+        if (autor.length === 0) {
+          alert('Digite um nome válido para o autor.');
+          return;
+        }
+        db.ref('config/autor').set(autor)
+          .then(() => alert('Nome do autor salvo com sucesso!'))
+          .catch(() => alert('Erro ao salvar autor.'));
+      };
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const abaNum = form.abaNumber.value.trim();
-    const title = form.title.value.trim();
-    const text = form.text.value.trim();
-
-    if (abaNum && title && text) {
-      // Salva no Firebase na chave abas/abaNum
-      db.ref('abas/aba' + abaNum).set({ title, text })
-        .then(() => {
-          message.innerHTML = `<div class="alert alert-success">Aba ${abaNum} salva com sucesso!</div>`;
-          form.reset();
-        })
-        .catch(err => {
-          message.innerHTML = `<div class="alert alert-danger">Erro ao salvar: ${err.message}</div>`;
+      // Carregar abas e mostrar na lista
+      function carregarAbas() {
+        abasList.innerHTML = '';
+        db.ref('abas').once('value').then(snapshot => {
+          const data = snapshot.val() || {};
+          let i = 1;
+          for (const key in data) {
+            criarEditorAba(key, data[key], i);
+            i++;
+          }
         });
-    } else {
-      message.innerHTML = `<div class="alert alert-warning">Preencha todos os campos!</div>`;
-    }
-  });
-</script>
+      }
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      function criarEditorAba(key, aba, index) {
+        const div = document.createElement('div');
+        div.classList.add('mb-3', 'border', 'p-3', 'rounded');
+
+        div.innerHTML = `
+          <h5>Aba ${index}</h5>
+          <label>Título:</label>
+          <input type="text" class="form-control mb-2" value="${aba.title || ''}" />
+          <label>Texto:</label>
+          <textarea class="form-control mb-2" rows="4">${aba.text || ''}</textarea>
+          <button class="btn btn-danger btn-sm">Excluir Aba</button>
+        `;
+
+        const [titleInput, textInput, deleteBtn] = div.querySelectorAll('input, textarea, button');
+
+        titleInput.onchange = () => {
+          db.ref(`abas/${key}/title`).set(titleInput.value);
+        };
+        textInput.onchange = () => {
+          db.ref(`abas/${key}/text`).set(textInput.value);
+        };
+        deleteBtn.onclick = () => {
+          if (confirm(`Excluir aba ${index}?`)) {
+            db.ref(`abas/${key}`).remove().then(() => carregarAbas());
+          }
+        };
+
+        abasList.appendChild(div);
+      }
+
+      addAbaBtn.onclick = () => {
+        // Criar nova aba com ID único (timestamp)
+        const novoKey = 'aba_' + Date.now();
+        db.ref(`abas/${novoKey}`).set({
+          title: 'Título da nova aba',
+          text: 'Conteúdo da nova aba'
+        }).then(() => carregarAbas());
+      };
+
+      carregarAbas();
+    </script>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
