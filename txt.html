@@ -1,46 +1,311 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Site com 6 abas + Apresentação Google Slides</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    /* Animação ao passar o mouse (hover) */
-    .nav-link {
-      transition: transform 0.3s ease;
-      cursor: pointer;
-    }
-    .nav-link:hover {
-      transform: scale(1.1);
-      z-index: 10;
-      position: relative;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tabs Avançadas com 20 Animações</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+<style>
+  .nav-link {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    perspective: 1000px;
+    user-select: none;
+    transition: color 0.3s ease;
+  }
+  .nav-link.active {
+    color: #ff4500;
+  }
 
-    /* Animação ao clicar - pulse */
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.2);
-      }
-      100% {
-        transform: scale(1);
-      }
+  .neon-glow {
+    text-shadow:
+      0 0 5px #ff4500,
+      0 0 10px #ff4500,
+      0 0 20px #ff4500,
+      0 0 40px #ff4500,
+      0 0 80px #ff4500;
+  }
+
+  /* 1. Glitch */
+  @keyframes glitch-anim {
+    0% {
+      clip-path: inset(0 0 85% 0);
+      transform: translate(-2px, -2px);
+      opacity: 0.8;
     }
-    .nav-link.pulse {
-      animation: pulse 0.4s ease;
-      z-index: 10;
-      position: relative;
+    20% {
+      clip-path: inset(10% 0 75% 0);
+      transform: translate(2px, 2px);
+      opacity: 1;
     }
-  </style>
+    40% {
+      clip-path: inset(85% 0 0 0);
+      transform: translate(-2px, 2px);
+      opacity: 0.9;
+    }
+    60% {
+      clip-path: inset(20% 0 60% 0);
+      transform: translate(2px, -2px);
+      opacity: 1;
+    }
+    80% {
+      clip-path: inset(0 0 85% 0);
+      transform: translate(0, 0);
+      opacity: 0.8;
+    }
+    100% {
+      clip-path: inset(0 0 85% 0);
+      transform: translate(0, 0);
+      opacity: 0.8;
+    }
+  }
+  .anim-glitch {
+    animation: glitch-anim 1s infinite;
+    color: #ff004f;
+  }
+
+  /* 2. Wave text */
+  @keyframes wave {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  .anim-wave span {
+    display: inline-block;
+    animation-name: wave;
+    animation-duration: 1.2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+  .anim-wave span:nth-child(odd) {
+    animation-delay: 0s;
+  }
+  .anim-wave span:nth-child(even) {
+    animation-delay: 0.6s;
+  }
+
+  /* 3. Neon flicker */
+  @keyframes neon-flicker {
+    0%, 100% {
+      text-shadow:
+        0 0 2px #0ff,
+        0 0 10px #0ff,
+        0 0 20px #0ff,
+        0 0 40px #0ff,
+        0 0 80px #0ff;
+    }
+    50% {
+      text-shadow: none;
+      color: #033;
+    }
+  }
+  .anim-neon-flicker {
+    animation: neon-flicker 2s infinite;
+    color: #0ff;
+  }
+
+  /* 4. Rotate 3D */
+  @keyframes rotate3d {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(180deg); }
+    100% { transform: rotateY(360deg); }
+  }
+  .anim-rotate3d {
+    animation: rotate3d 1.5s linear infinite;
+  }
+
+  /* 5. Blur pulse */
+  @keyframes blur-pulse {
+    0%, 100% { filter: blur(0); }
+    50% { filter: blur(2px); }
+  }
+  .anim-blur-pulse {
+    animation: blur-pulse 1s ease-in-out infinite;
+  }
+
+  /* 6. Scale and shadow */
+  @keyframes scale-shadow {
+    0%, 100% { transform: scale(1); box-shadow: none; }
+    50% { transform: scale(1.2); box-shadow: 0 0 15px #ff4500; }
+  }
+  .anim-scale-shadow {
+    animation: scale-shadow 0.8s ease-in-out infinite;
+  }
+
+  /* 7. Color shift */
+  @keyframes color-shift {
+    0% { color: #ff4500; }
+    50% { color: #ffa500; }
+    100% { color: #ff4500; }
+  }
+  .anim-color-shift {
+    animation: color-shift 3s linear infinite;
+  }
+
+  /* 8. Hover glow */
+  .hover-glow {
+    position: relative;
+    transition: box-shadow 0.3s ease;
+  }
+  .hover-glow:hover {
+    box-shadow: 0 0 15px #ff4500;
+  }
+
+  /* 9. Shake */
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+  .anim-shake {
+    animation: shake 0.6s ease-in-out;
+    color: #e91e63;
+  }
+
+  /* 10. Pulse scale */
+  @keyframes pulse-scale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .anim-pulse-scale {
+    animation: pulse-scale 0.7s ease-in-out infinite;
+    color: #00bcd4;
+  }
+
+  /* 11. Flip X */
+  @keyframes flipx {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(180deg); }
+    100% { transform: rotateX(360deg); }
+  }
+  .anim-flipx {
+    animation: flipx 1.2s linear infinite;
+  }
+
+  /* 12. Glow red */
+  @keyframes glow-red {
+    0%, 100% {
+      text-shadow: 0 0 10px #ff1744, 0 0 20px #ff1744;
+    }
+    50% {
+      text-shadow: 0 0 20px #ff80ab, 0 0 30px #ff80ab;
+    }
+  }
+  .anim-glow-red {
+    animation: glow-red 2s ease-in-out infinite;
+  }
+
+  /* 13. Zoom blur */
+  @keyframes zoom-blur {
+    0%, 100% { transform: scale(1); filter: blur(0); }
+    50% { transform: scale(1.2); filter: blur(3px); }
+  }
+  .anim-zoom-blur {
+    animation: zoom-blur 1s ease-in-out infinite;
+  }
+
+  /* 14. Slide left */
+  @keyframes slide-left {
+    0%, 100% { transform: translateX(0); opacity: 1; }
+    50% { transform: translateX(-20px); opacity: 0.6; }
+  }
+  .anim-slide-left {
+    animation: slide-left 1.5s ease-in-out infinite;
+  }
+
+  /* 15. Shadow pulse */
+  @keyframes shadow-pulse {
+    0%, 100% { box-shadow: none; }
+    50% { box-shadow: 0 0 15px 5px #2196f3; }
+  }
+  .anim-shadow-pulse {
+    animation: shadow-pulse 1.8s ease-in-out infinite;
+  }
+
+  /* 16. Color flicker */
+  @keyframes color-flicker {
+    0%, 100% { color: #fff; }
+    20%, 80% { color: #ffeb3b; }
+    50% { color: #f44336; }
+  }
+  .anim-color-flicker {
+    animation: color-flicker 1.5s ease-in-out infinite;
+  }
+
+  /* 17. Skew swing */
+  @keyframes skew-swing {
+    0%, 100% { transform: skew(0deg); }
+    50% { transform: skew(20deg); }
+  }
+  .anim-skew-swing {
+    animation: skew-swing 1s ease-in-out infinite;
+  }
+
+  /* 18. Flip Y */
+  @keyframes flipy {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(180deg); }
+    100% { transform: rotateY(360deg); }
+  }
+  .anim-flipy {
+    animation: flipy 1.5s linear infinite;
+  }
+
+  /* 19. Glow cyan */
+  @keyframes glow-cyan {
+    0%, 100% {
+      text-shadow: 0 0 5px #00bcd4, 0 0 15px #00bcd4, 0 0 30px #00bcd4;
+    }
+    50% {
+      text-shadow: 0 0 10px #00e5ff, 0 0 25px #00e5ff, 0 0 50px #00e5ff;
+    }
+  }
+  .anim-glow-cyan {
+    animation: glow-cyan 2.5s ease-in-out infinite;
+  }
+
+  /* 20. Bounce */
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  .anim-bounce {
+    animation: bounce 0.7s ease-in-out infinite;
+  }
+
+  /* Cursor follow effect */
+  .nav-link {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+  }
+  .nav-link::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    top: var(--mouse-y);
+    left: var(--mouse-x);
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(255,69,0,0.4) 0%, transparent 80%);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 0;
+  }
+  .nav-link:hover::before {
+    opacity: 1;
+  }
+</style>
 </head>
 <body>
 
 <div class="container mt-4">
 
-  <!-- Navegação das abas -->
   <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
       <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">1</button>
@@ -58,43 +323,34 @@
       <button class="nav-link" id="tab5-tab" data-bs-toggle="tab" data-bs-target="#tab5" type="button" role="tab" aria-controls="tab5" aria-selected="false">5</button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab6-tab" data-bs-toggle="tab" data-bs-target="#tab6" type="button" role="tab" aria-controls="tab6" aria-selected="false">6. Apresentação</button>
+      <button class="nav-link" id="tab6-tab" data-bs-toggle="tab" data-bs-target="#tab6" type="button" role="tab" aria-controls="tab6" aria-selected="false">6</button>
     </li>
   </ul>
 
-  <!-- Conteúdo das abas -->
-  <div class="tab-content" id="myTabContent" style="min-height: 650px;">
+  <div class="tab-content" id="myTabContent" style="min-height: 300px;">
     <div class="tab-pane fade show active p-3" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
       <h3>Aba 1</h3>
-      <p>Conteúdo da primeira aba.</p>
+      <p>Conteúdo da aba 1.</p>
     </div>
     <div class="tab-pane fade p-3" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
       <h3>Aba 2</h3>
-      <p>Conteúdo da segunda aba.</p>
+      <p>Conteúdo da aba 2.</p>
     </div>
     <div class="tab-pane fade p-3" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
       <h3>Aba 3</h3>
-      <p>Conteúdo da terceira aba.</p>
+      <p>Conteúdo da aba 3.</p>
     </div>
     <div class="tab-pane fade p-3" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
       <h3>Aba 4</h3>
-      <p>Conteúdo da quarta aba.</p>
+      <p>Conteúdo da aba 4.</p>
     </div>
     <div class="tab-pane fade p-3" id="tab5" role="tabpanel" aria-labelledby="tab5-tab">
       <h3>Aba 5</h3>
-      <p>Conteúdo da quinta aba.</p>
+      <p>Conteúdo da aba 5.</p>
     </div>
     <div class="tab-pane fade p-3" id="tab6" role="tabpanel" aria-labelledby="tab6-tab">
-      <h3>Apresentação Google Slides</h3>
-     <iframe 
-  src="https://docs.google.com/presentation/d/e/2PACX-1vQ...ID-UNICO/pub?start=false&loop=false&delayms=3000" 
-  frameborder="0" 
-  width="100%" 
-  height="600" 
-  allowfullscreen 
-  mozallowfullscreen 
-  webkitallowfullscreen>
-</iframe>
+      <h3>Aba 6</h3>
+      <p>Conteúdo da aba 6.</p>
     </div>
   </div>
 
@@ -102,21 +358,66 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // Pega todos os botões das abas
   const tabs = document.querySelectorAll('.nav-link');
 
+  const animations = [
+    'anim-glitch',
+    'anim-wave',
+    'anim-neon-flicker',
+    'anim-rotate3d',
+    'anim-blur-pulse',
+    'anim-scale-shadow',
+    'anim-color-shift',
+    'anim-shake',
+    'anim-pulse-scale',
+    'anim-flipx',
+    'anim-glow-red',
+    'anim-zoom-blur',
+    'anim-slide-left',
+    'anim-shadow-pulse',
+    'anim-color-flicker',
+    'anim-skew-swing',
+    'anim-flipy',
+    'anim-glow-cyan',
+    'anim-bounce',
+  ];
+
   tabs.forEach(tab => {
+    // Para o efeito wave, envolver letras em span pra animar
+    function wrapLetters(text) {
+      return [...text].map(letter => `<span>${letter}</span>`).join('');
+    }
+
     tab.addEventListener('click', () => {
-      // Remove a classe pulse de todos (para garantir reset)
-      tabs.forEach(t => t.classList.remove('pulse'));
+      // Remove todas as animações antes
+      tabs.forEach(t => {
+        t.className = t.className.replace(/\banim-\S+/g, '').trim();
+        // Remover spans caso tenha wave
+        if(t.classList.contains('anim-wave')) {
+          t.innerHTML = t.textContent;
+          t.classList.remove('anim-wave');
+        }
+      });
 
-      // Adiciona a classe pulse na aba clicada
-      tab.classList.add('pulse');
+      // Escolhe animação aleatória
+      const anim = animations[Math.floor(Math.random() * animations.length)];
 
-      // Remove a classe pulse depois que animação termina (400ms)
-      setTimeout(() => {
-        tab.classList.remove('pulse');
-      }, 400);
+      // Aplica animação na aba clicada
+      if(anim === 'anim-wave') {
+        tab.innerHTML = wrapLetters(tab.textContent);
+        tab.classList.add(anim);
+      } else {
+        tab.classList.add(anim);
+      }
+    });
+
+    // Cursor efeito:
+    tab.addEventListener('mousemove', e => {
+      const rect = tab.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      tab.style.setProperty('--mouse-x', x + '%');
+      tab.style.setProperty('--mouse-y', y + '%');
     });
   });
 </script>
